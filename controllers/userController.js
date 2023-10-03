@@ -122,6 +122,181 @@
 // controllers/userController.js
 // import User from "../models/user.js";
 
+// controllers/userController.js
+// import User from "../models/user.js";
+
+// import bcrypt from "bcrypt";
+// import { SendCookie } from "../utils/features.js";
+
+// export const login = async (req, res, next) => {
+//   const { email, password } = req.body;
+
+//   // Check if the provided email exists in the database
+//   let user = await User.findOne({ email }).select("+password");
+
+//   if (!user) {
+//     return res.status(404).json({
+//       success: false,
+//       message: "Invalid Email and Password",
+//     });
+//   }
+
+//   const isMatch = await bcrypt.compare(password, user.password);
+//   if (!isMatch) {
+//     return res.status(404).json({
+//       success: false,
+//       message: "Invalid Email and Password",
+//     });
+//   }
+
+//   SendCookie(user, res, `Welcome back, ${user.name}`,200);
+// };
+
+// export const register = async (req, res) => {
+//   const { name, email, password } = req.body;
+
+//   let user = await User.findOne({ email });
+
+//   if (user) {
+//     return res.status(404).json({
+//       success: false,
+//       message: "User Already exist",
+//     });
+//   }
+
+//   const hashedPassword = await bcrypt.hash(password, 10);
+
+//   user = await User.create({ name, email, password: hashedPassword });
+
+//   SendCookie(user, res, "Registered Succesfully", 201);
+// };
+
+// export const getMyProfile = (req, res) => {
+
+//   res.status(200).json({
+//     success:true,
+//     user:req.user,
+//   });
+// };
+
+// export const logout = (req, res) => {
+//   res.status(200).cookie("token", "", {expires:new Date(Date.now())}).json({
+//     success:true,
+//     Messsage:"Logout Successful",
+//     user:req.user,
+//   });
+// }
+
+// export const getAllUsers = async (req, res) => {};
+
+
+
+
+
+
+
+
+
+
+
+
+// import User from "../models/user.js";
+// import bcrypt from "bcrypt";
+// import { SendCookie } from "../utils/features.js";
+// import errorHandler from "../middlewares/error.js"
+
+// export const login = async (req, res, next) => {
+//   try {
+//     const { email, password } = req.body;
+
+//     // Check if the provided email exists in the database
+//     let user = await User.findOne({ email }).select("+password");
+
+//     if (!user) {
+//       throw new Error("Invalid Email and Password"); // Use 'throw' to trigger the error middleware
+//     }
+
+//     const isMatch = await bcrypt.compare(password, user.password);
+//     if (!isMatch) {
+//       throw new Error("Incorrect Password"); // Use 'throw' to trigger the error middleware
+//     }
+
+//     SendCookie(user, res, `Welcome back, ${user.name}`, 200);
+//   } catch (error) {
+//     next(error); // Pass the error to the error handling middleware
+//   }
+// };
+
+// export const register = async (req, res, next) => {
+//   try {
+//     const { name, email, password } = req.body;
+
+//     let user = await User.findOne({ email });
+
+//     if (user) {
+//       throw new Error("User Already Exists"); // Use 'throw' to trigger the error middleware
+//     }
+
+//     const hashedPassword = await bcrypt.hash(password, 10);
+
+//     user = await User.create({ name, email, password: hashedPassword });
+
+//     SendCookie(user, res, "Registered Successfully", 201);
+//   } catch (error) {
+//     next(error); // Pass the error to the error handling middleware
+//   }
+// };
+
+// export const getMyProfile = (req, res) => {
+//   res.status(200).json({
+//     success: true,
+//     user: req.user,
+//   });
+// };
+
+// export const logout = (req, res) => {
+//   res
+//     .status(200)
+//     .cookie("token", "", { expires: new Date(Date.now()) })
+//     .json({
+//       success: true,
+//       message: "Logout Successful",
+//       user: req.user,
+//     });
+// };
+
+// export const getAllUsers = async (req, res) => {
+//   // Implement this route as needed
+// };
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
+
 
 
 
@@ -130,70 +305,88 @@
 
 // controllers/userController.js
 import User from "../models/user.js";
-
 import bcrypt from "bcrypt";
-import jwt from "jsonwebtoken";
 import { SendCookie } from "../utils/features.js";
 
 export const login = async (req, res, next) => {
-  const { email, password } = req.body;
+  try {
+    const { email, password } = req.body;
 
-  // Check if the provided email exists in the database
-  let user = await User.findOne({ email }).select("+password");
+    // Check if the provided email exists in the database
+    let user = await User.findOne({ email }).select("+password");
 
-  if (!user) {
-    return res.status(404).json({
+    if (!user) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid Email and Password",
+      });
+    }
+
+    const isMatch = await bcrypt.compare(password, user.password);
+    if (!isMatch) {
+      return res.status(404).json({
+        success: false,
+        message: "Invalid Email and Password",
+      });
+    }
+
+    SendCookie(user, res, `Welcome back, ${user.name}`, 200);
+  } catch (error) {
+    console.error("Error in login:", error);
+    res.status(500).json({
       success: false,
-      message: "Invalid Email and Password",
+      message: "Internal Server Error",
     });
   }
-
-  const isMatch = await bcrypt.compare(password, user.password);
-  if (!isMatch) {
-    return res.status(404).json({
-      success: false,
-      message: "Invalid Email and Password",
-    });
-  }
-
-  SendCookie(user, res, `Welcome back, ${user.name}`,200);
 };
 
 export const register = async (req, res) => {
-  const { name, email, password } = req.body;
+  try {
+    const { name, email, password } = req.body;
 
-  let user = await User.findOne({ email });
+    let user = await User.findOne({ email });
 
-  if (user) {
-    return res.status(404).json({
+    if (user) {
+      return res.status(404).json({
+        success: false,
+        message: "User Already Exists",
+      });
+    }
+
+    const hashedPassword = await bcrypt.hash(password, 10);
+
+    user = await User.create({ name, email, password: hashedPassword });
+
+    SendCookie(user, res, "Registered Successfully", 201);
+  } catch (error) {
+    console.error("Error in register:", error);
+    res.status(500).json({
       success: false,
-      message: "User Already exist",
+      message: "Internal Server Error",
     });
   }
-
-  const hashedPassword = await bcrypt.hash(password, 10);
-
-  user = await User.create({ name, email, password: hashedPassword });
-
-  SendCookie(user, res, "Registered Succesfully", 201);
 };
 
 export const getMyProfile = (req, res) => {
-
   res.status(200).json({
-    success:true,
-    user:req.user,
+    success: true,
+    user: req.user,
   });
 };
 
 export const logout = (req, res) => {
-  res.status(200).cookie("token", "", {expires:new Date(Date.now())}).json({
-    success:true,
-    Messsage:"Logout Successful",
-    user:req.user,
-  });
-}
+  res
+    .status(200)
+    .cookie("token", "", { expires: new Date(Date.now()),
+      sameSite: process.env.node_env==="Development" ? "lax" : "none",
+      secure:process.env.node_env==="Development" ? false : true, })
+    .json({
+      success: true,
+      message: "Logout Successful",
+      user: req.user,
+    });
+};
 
-
-export const getAllUsers = async (req, res) => {};
-
+export const getAllUsers = async (req, res) => {
+  // Implement this route as needed
+};

@@ -1,15 +1,9 @@
 import { app } from "./app.js";
-import mongoose from "mongoose";
-const PORT = 3000;
+import { connectDB } from "./data/database.js";
+const PORT = process.env.PORT;
 
-mongoose
-  .connect("mongodb://127.0.0.1:27017", {
-    dbName: "backendTODO",
-  })
-  .then(() => console.log("Connected to mongodb"))
-  .catch((e) => console.log(e));
-
-
+connectDB();
+// console.log(PORT);
 app.listen(PORT, () => {
-  console.log(`Server is listening on Port ${PORT}`);
+  console.log(`Server is listening on Port ${PORT} in ${process.env.node_env} mode`);
 });
